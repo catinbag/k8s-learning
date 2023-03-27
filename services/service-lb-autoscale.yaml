@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: as-deploy
+  labels:
+    app: k8s-as-deploy
+    type: as-lb
+spec:
+  selector:
+    matchLabels:
+      project: aslb
+  template:
+    metadata:
+      labels:
+        project: aslb
+    spec:
+      containers:
+        - name: aslb-web
+          image: adv4000/k8sphp:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: has
+  labels:
+    env: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2beta1v1
+    kind: Deployment
+    name: as-deploy
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: as-service
+  labels:
+    env: prod
+spec:
+  type: LoadBalancer
+  selector:
+    project: aslb
+  ports:
+    - name: app-listener
+      protocol: TCP
+      port: 4000
+      targetPort: 80

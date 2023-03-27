@@ -1,0 +1,3 @@
+- load ingress controller
+- create lb
+- niop domain name

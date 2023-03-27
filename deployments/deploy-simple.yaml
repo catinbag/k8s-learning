@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-first
+  labels:
+    app: k8s-app
+    stand: production
+spec:
+  selector:
+    matchLabels:
+      project: my-dpl
+  template:
+    metadata:
+      labels:
+        project: my-dpl
+    spec:
+      containers:
+        - name: my-dpl-web
+          image: adv4000/k8sphp:version1
+          ports:
+            - containerPort: 80

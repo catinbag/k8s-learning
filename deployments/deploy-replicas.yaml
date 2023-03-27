@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-replicas
+  labels:
+    app: k8s-app
+    type: replicas
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: rd
+  template:
+    metadata:
+      labels:
+        project: rd
+    spec:
+      containers:
+        - name: rd-web
+          # image: adv4000/k8sphp:version1
+          image: nginx:latest
+          ports:
+            - containerPort: 80
